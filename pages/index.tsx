@@ -74,9 +74,11 @@ export default function Home() {
             </p>
           }
           {error && <p className="message bad">Whoops! Something went wrong. Try again?</p>}
-          {!loading && !error && (data && <p className="message good">Loaded data successfully.</p>
-            || <p>Let&apos;s get started!<br /><small>Enter a search word (or none) and press the button.</small></p>)}
-
+          {!loading && !error &&
+            (data && <p className="message good">Loaded data successfully.</p>
+              || <p>Let&apos;s get started!<br /><small>Enter a search word (or none) and press the button.</small></p>
+            )
+          }
         </div>
 
         <div className={styles.grid}>
@@ -92,6 +94,10 @@ export default function Home() {
           }) : <p>Nothing matched. Try again?</p>)}
         </div>
       </main>
+
+      <footer className={styles.footer}>
+        {/* TODO: pin articles in here... */}
+      </footer>
     </div>
-  )
+  );
 }
