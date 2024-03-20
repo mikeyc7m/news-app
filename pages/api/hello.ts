@@ -10,6 +10,7 @@ export type Data = {
 }
 
 type Result = {
+  id: string
   webTitle: string
   webUrl: string
   sectionName: string
@@ -20,7 +21,8 @@ export default function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const url = 'http://localhost:3000/guardian_api.json?';
+  const url = 'https://content.guardianapis.com/search?api-key=test&';
+  //const url = 'http://localhost:3000/guardian_api.json?';
   try {
     const { q } = req.query || {};
     const searchStr = Array.isArray(q) ? q.join(' ') : q;
