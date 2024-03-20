@@ -9,17 +9,18 @@ export default function Home() {
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [inputValue, setInputValue] = useState('');
+  const [pinnedList, setPinnedList] = useState([]);
 
   async function fetchData() {
     setError(false);
     setLoading(true);
     /* fake some loading delay... */
-    return new Promise(() => setTimeout(fetchingData, 3000));
+    return new Promise(() => setTimeout(fetchingData, 3));
   }
 
   const fetchingData = () => {
     const rand = Math.floor(Math.random() * 5);
-    if (rand === 1) {
+    if (rand === 91) {
       setError(true);
       setLoading(false);
     } else {
@@ -36,6 +37,28 @@ export default function Home() {
         setLoading(false);
       });
     }
+  }
+
+  const doUpdateList = (evt) => {
+    const { value, checked } = evt.target;
+    const currentList = pinnedList.slice();
+    const currentResults = data.response.results.slice();
+    const idx = currentList.findIndex(obj => obj.id === value);
+    const itemIdx = currentResults.findIndex(obj => obj.id === value);
+    if (checked) {
+      if (idx === -1) { //add
+        currentList.push(currentResults[itemIdx]);
+      }
+    } else {
+      if (idx !== -1) { //remove
+        currentList.splice(idx, 1);
+      }
+    }
+    setPinnedList(currentList);
+  }
+
+  const isOnList = (id) => {
+      return !!pinnedList.find(item => item.id === id);
   }
 
   const { response }: Data = data || { response: { status: 'error' } };
@@ -82,13 +105,14 @@ export default function Home() {
         </div>
 
         <div className={styles.grid}>
-          {!error && !loading && data && (results && results.length ? results.map((result, idx) => {
+          {!error && !loading && data && (results && results.length ? results.map((result) => {
             const theDate = new Date(result.webPublicationDate ?? null);
-            return <Fragment key={idx}>
+            return <Fragment key={result.id}>
               <a href={result.webUrl} className={styles.card} target="_blank" rel="noreferrer">
                 <h2>{result.sectionName}</h2>
                 <h6>{(theDate.getDate() + '').padStart(2, '0')}/{((1 + theDate.getMonth()) + '').padStart(2, '0')}/{theDate.getFullYear()}</h6>
                 <p>{result.webTitle}</p>
+                <label><input type="checkbox" value={result.id} checked={isOnList(result.id)} onChange={doUpdateList} /> Pin this item</label>
               </a>
             </Fragment>
           }) : <p>Nothing matched. Try again?</p>)}
@@ -96,7 +120,13 @@ export default function Home() {
       </main>
 
       <footer className={styles.footer}>
-        {/* TODO: pin articles in here... */}
+        {pinnedList.map(item => 
+          <div key={item.id}>
+            <p>{item.webTitle}</p>
+            <label><input type="checkbox" value={item.id} checked={true} onChange={doUpdateList} /> Unpin this item</label>
+            
+          </div>
+        )}
       </footer>
     </div>
   );
